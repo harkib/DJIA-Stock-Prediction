@@ -1,5 +1,10 @@
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.linear_model import SGDClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from textblob import TextBlob
 from sklearn import preprocessing
@@ -73,7 +78,18 @@ if __name__ == '__main__':
     X_train = preprocessing.scale(X_train)
     X_test = preprocessing.scale(X_test)
 
-    # test model
-    model = LinearDiscriminantAnalysis()
-    model.fit(X_train,y_train)
-    print(classification_report(model.predict(X_test),y_test))
+    # test models
+    models = {  'LinearDiscriminantAnalysis':LinearDiscriminantAnalysis(),
+                'SVM Classification': SVC(),
+                'SGDClassifier': SGDClassifier(loss="hinge", penalty="l2", max_iter=100),
+                'KNeighborsClassifier':KNeighborsClassifier(n_neighbors=10),
+                'GaussianProcessClassifier': GaussianProcessClassifier(),
+                'RandomForestClassifier': RandomForestClassifier(n_estimators=100)
+                }
+
+    for model_name in models.keys():
+
+        model = models[model_name]
+        print('--------------',model_name,'---------------')
+        model.fit(X_train,y_train)
+        print(classification_report(model.predict(X_test),y_test))
